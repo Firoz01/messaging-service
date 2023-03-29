@@ -3,7 +3,6 @@ const catchAsync = require('../Utils/catchAsync');
 
 exports.addNewMessage = catchAsync(async (req, res, next) => {
   const { chatId, senderId, text } = req.body;
-
   const message = new Message({
     chatId,
     senderId,

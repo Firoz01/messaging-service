@@ -9,6 +9,7 @@ const globalErrorHandler = require('./ErrorHandler/errorHandler');
 const ChatRoute = require('./Routes/chatRoute');
 const MessageRoute = require('./Routes/messageRoute');
 const { SOCKET_PORT, NODE_ENV } = require('./Config/constant');
+const AppError = require('./Utils/appError');
 
 const app = express();
 

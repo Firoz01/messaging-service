@@ -3,11 +3,11 @@ const Message = require('../Model/messageModel');
 const AppError = require('../Utils/appError');
 const catchAsync = require('../Utils/catchAsync');
 
-exports.createChat = catchAsync(async (req, res) => {
+exports.createChat = catchAsync(async (req, res, next) => {
   const senderId = req.body.senderId;
   const receiverId = req.body.receiverId;
-  const optionalMessage = req.body.opt_message;
-  const result = await ChatModel.findOne({
+  const text = req.body.opt_message;
+  const result = await Chat.findOne({
     members: { $all: [senderId, receiverId] }
   });
 
@@ -17,18 +17,20 @@ exports.createChat = catchAsync(async (req, res) => {
     );
   }
 
-  const newChat = new ChatModel({
+  const newChat = new Chat({
     members: [senderId, receiverId]
   });
 
   const createdChat = await newChat.save();
-  if (optionalMessage) {
+
+  if (text !== null) {
     const chatId = createdChat._id;
     const message = new Message({
       chatId,
       senderId,
-      optionalMessage
+      text
     });
+
     await message.save();
   }
 
