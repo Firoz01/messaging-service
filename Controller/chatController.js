@@ -34,7 +34,9 @@ exports.createChat = catchAsync(async (req, res, next) => {
     await message.save();
   }
 
-  res.status(200).json('chat has been created successfully');
+  res
+    .status(200)
+    .json({ status: 'success', message: 'chat has been created successfully' });
 });
 
 exports.userChatLists = catchAsync(async (req, res, next) => {

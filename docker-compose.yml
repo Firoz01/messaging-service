@@ -4,12 +4,9 @@ services:
   messaging-service:
     build: .
     ports:
-      - '5000: 5000'
-      - '8800: 8800'
-    networks:
-      - webnet
+      - '5000:5000'
+      - '8800:8800'
 
 networks:
   default:
-    external: true
     name: gono-jobs-messaging-service
