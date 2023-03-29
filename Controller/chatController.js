@@ -13,7 +13,10 @@ exports.createChat = catchAsync(async (req, res, next) => {
 
   if (result) {
     return next(
-      new AppError(`Already created chat with ${senderId} and ${receiverId}`)
+      new AppError(
+        `Already created chat with ${senderId} and ${receiverId}`,
+        409
+      )
     );
   }
 
@@ -45,7 +48,8 @@ exports.userChatLists = catchAsync(async (req, res, next) => {
   if (chatlists.length === 0) {
     return next(
       new AppError(
-        `No chat lists found in the the database with that id ${userId}`
+        `No chat lists found in the the database with that id ${userId}`,
+        404
       )
     );
   }
