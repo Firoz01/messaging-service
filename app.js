@@ -26,9 +26,12 @@ if (NODE_ENV === 'development') {
   app.use(morgan(':date[clf] ":method :url"'));
 }
 
+app.get('/', (req, res) => {
+  res.status(200).json('Gono Jobs Messaging service');
+});
+
 app.use('/api/v1/chat', ChatRoute);
 app.use('/api/v1/message', MessageRoute);
-
 
 let activeUsers = [];
 
