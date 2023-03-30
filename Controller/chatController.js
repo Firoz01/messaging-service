@@ -4,9 +4,13 @@ const AppError = require('../Utils/appError');
 const catchAsync = require('../Utils/catchAsync');
 
 exports.createChat = catchAsync(async (req, res, next) => {
-  const senderId = req.body.senderId;
-  const receiverId = req.body.receiverId;
-  const text = req.body.opt_message;
+  const { senderId, receiverId, opt_message } = req.body;
+
+  if (senderId === undefined || receiverId === undefined) {
+    return next(new AppError(`SenderId or ReceiverId missing`, 404));
+  }
+
+  const text = opt_message;
   const result = await Chat.findOne({
     members: { $all: [senderId, receiverId] }
   });

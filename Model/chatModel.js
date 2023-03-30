@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const chatSchema = mongoose.Schema(
   {
     members: {
-      type: Array,
-      required: [true, 'sender Id  and  Receiver required in array formate']
+      type: [String],
+      required: [true, 'members can not be empty']
     }
   },
   {
