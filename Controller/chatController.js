@@ -66,6 +66,18 @@ exports.userChatLists = catchAsync(async (req, res) => {
     })
   );
 
+  chatListsWithLastMessage.sort((a, b) => {
+    if (!a.lastMessage && !b.lastMessage) {
+      return 0;
+    } else if (!a.lastMessage) {
+      return 1;
+    } else if (!b.lastMessage) {
+      return -1;
+    } else {
+      return b.lastMessage.createdAt.getTime() - a.lastMessage.createdAt.getTime();
+    }
+  });
+
   res.status(200).json({
     status: 'success',
     message: `found ${chatListsWithLastMessage.length} chats`,
