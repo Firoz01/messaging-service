@@ -46,20 +46,29 @@ exports.createChat = catchAsync(async (req, res, next) => {
     .json({ status: 'success', message: 'chat has been created successfully' });
 });
 
-exports.userChatLists = catchAsync(async (req, res, next) => {
-  const userId = req.params.userId;
-  const chatlists = await Chat.find({ members: { $in: [userId] } });
-  if (chatlists.length === 0) {
-    return next(
-      new AppError(
-        `No chat lists found in the the database with that id ${userId}`,
-        404
-      )
-    );
-  }
+exports.userChatLists = catchAsync(async (req, res) => {
+  const chatLists = await Chat.find({
+    members: { $in: [req.params.userId] }
+  });
+
+  // Iterate over each chat list and find the last sent message
+  const chatListsWithLastMessage = await Promise.all(
+    chatLists.map(async (chat) => {
+      const lastMessage = await Message.find({ chatId: chat._id })
+        .sort({ createdAt: -1 })
+        .limit(1);
+
+      return {
+        chatId: chat._id,
+        members: chat.members,
+        lastMessage: lastMessage.length > 0 ? lastMessage[0] : null
+      };
+    })
+  );
+
   res.status(200).json({
     status: 'success',
-    message: ` found ${chatlists.length} chats`,
-    data: chatlists
+    message: `found ${chatListsWithLastMessage.length} chats`,
+    data: chatListsWithLastMessage
   });
 });
