@@ -34,46 +34,8 @@ app.get('/', (req, res) => {
 app.use('/api/v1/chat', ChatRoute);
 app.use('/api/v1/message', MessageRoute);
 
-const activeUsers = (function() {
-  let users = [];
-
-  return {
-    addUser: function(userId, socketId) {
-      if (!users.some((user) => user.userId === userId)) {
-        users.push({ userId, socketId });
-      }
-    },
-    removeUser: function(socketId) {
-      users = users.filter((user) => user.socketId !== socketId);
-    },
-    getUsers: function() {
-      return users;
-    }
-  };
-})();
-
-io.on('connection', (socket) => {
-  console.log('client connected');
-
-  socket.on('new-user-add', (newUserId) => {
-    activeUsers.addUser(newUserId, socket.id);
-    io.emit('get-users', activeUsers.getUsers());
-  });
-
-  socket.on('send-message', (data) => {
-    const { receiverId } = data;
-    const user = activeUsers.getUsers().find((user) => user.userId === receiverId);
-    if (user) {
-      io.to(user.socketId).emit('receive-message', data);
-    }
-  });
-
-  socket.on('disconnect', () => {
-    activeUsers.removeUser(socket.id);
-    io.emit('get-users', activeUsers.getUsers());
-  });
-});
-
+const socketHandler = require('./socket')(socketServer);
+socketHandler.setupSocket();
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
